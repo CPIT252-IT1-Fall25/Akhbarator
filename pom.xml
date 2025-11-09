@@ -4,10 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>sa.edu.kau.fcit.cpit252.project</groupId>
-  <artifactId>course-project</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <artifactId>akhbarator</artifactId>
+  <version>0.1</version>
 
-  <name>course-project</name>
+  <name>akhbarator</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 

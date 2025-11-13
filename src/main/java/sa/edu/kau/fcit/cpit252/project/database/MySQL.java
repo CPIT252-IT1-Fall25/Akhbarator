@@ -1,6 +1,6 @@
-package sa.edu.kau.fcit.cpit252.project.viewer;
+package sa.edu.kau.fcit.cpit252.project.database;
 
-public class Postgres implements Database {
+public class MySQL implements Database {
     @Override
     public void connect() { }
 

@@ -23,6 +23,13 @@ public class Article {
         this.priority = 0;
     }
 
+    @Override
+    public String toString() {
+        return "<p>• " +
+                    "<a href='" + this.url + "'>" + this.title + "</a>" +
+                "</p>";
+    }
+
     static public class Builder{
         public String title;
         public String author;

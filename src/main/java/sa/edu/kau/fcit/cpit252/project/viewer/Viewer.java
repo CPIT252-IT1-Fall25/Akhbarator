@@ -1,40 +1,39 @@
 package sa.edu.kau.fcit.cpit252.project.viewer;
 
-import sa.edu.kau.fcit.cpit252.project.apis.Feed;
-import sa.edu.kau.fcit.cpit252.project.news.Article;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
-import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sa.edu.kau.fcit.cpit252.project.apis.Feed;
 
 public class Viewer {
-    public void run(Feed feed) {
-        ArrayList<Article> articles = feed.run();
-        String userName = System.getProperty("user.name");
+    static Logger logger = LoggerFactory.getLogger("sa.edu.kau.fcit.cpit252.project.viewer");
 
-        JFrame frame = new JFrame("Akhbarator");
+    public void run(Feed feed) {
+        var articles = feed.run();
+        var userName = System.getProperty("user.name");
+
+        var frame = new JFrame("Akhbarator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 600);
         frame.setLayout(new BorderLayout());
 
-        StringBuilder html = new StringBuilder("<html><h2>Welcome " + userName + "!</h2>");
-        for (Article a : articles) {
-            html.append("<p>• <a href='").append(a.url).append("'>")
-                    .append(a.title)
-                    .append("</a></p>");
-        }
+        var html = new StringBuilder(String.format("<html><h2>Welcome %s!</h2>", userName));
+        articles.forEach(a -> html.append(a.toString()));
         html.append("</html>");
 
-        JScrollPane scrollPane = getjScrollPane(html);
+        var scrollPane = createScrollPane(html);
 
         frame.add(scrollPane, BorderLayout.CENTER);
         frame.setVisible(true);
-
     }
 
-    private static JScrollPane getjScrollPane(StringBuilder html) {
-        JEditorPane editorPane = new JEditorPane("text/html", html.toString());
+    private static JScrollPane createScrollPane(StringBuilder html) {
+        var editorPane = new JEditorPane("text/html", html.toString());
         editorPane.setEditable(false);
         editorPane.setOpaque(false);
         editorPane.addHyperlinkListener(e -> {
@@ -42,12 +41,12 @@ public class Viewer {
                 try {
                     Desktop.getDesktop().browse(e.getURL().toURI());
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    logger.error(ex.getMessage(), ex);
                 }
             }
         });
 
-        JScrollPane scrollPane = new JScrollPane(editorPane);
+        var scrollPane = new JScrollPane(editorPane);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         return scrollPane;
     }

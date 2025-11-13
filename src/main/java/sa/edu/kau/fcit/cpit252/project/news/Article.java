@@ -10,6 +10,7 @@ public class Article {
     public Date date;
     public String url;
     public String content;
+    public String description;
     public int priority;
 
     private Article(Builder builder) {
@@ -18,6 +19,7 @@ public class Article {
         this.date = builder.date;
         this.url = builder.url;
         this.content = builder.content;
+        this.description = builder.description;
         this.priority = 0;
     }
 
@@ -27,6 +29,7 @@ public class Article {
         public Date date;
         public String url;
         public String content;
+        public String description;
         public int priority;
         public Builder(String title, String author) {
             this.title = title;
@@ -38,6 +41,10 @@ public class Article {
         }
         public Builder withURL(String url) {
             this.url = url;
+            return this;
+        }
+        public Builder withDescription(String description) {
+            this.description = description;
             return this;
         }
         public Builder withPriority(Integer priority) {

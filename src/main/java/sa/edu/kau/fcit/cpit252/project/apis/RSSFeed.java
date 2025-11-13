@@ -1,15 +1,21 @@
 package sa.edu.kau.fcit.cpit252.project.apis;
 
+import java.net.URL;
+import java.util.ArrayList;
+
+
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sa.edu.kau.fcit.cpit252.project.news.Article;
 
-import java.net.URL;
-import java.util.ArrayList;
 
 public class RSSFeed extends Feed{
+    static Logger logger = LoggerFactory.getLogger("sa.edu.kau.fcit.cpit252.project.apis.RSSFeed");
     public RSSFeed(URL url) {
         super(url);
     }
@@ -20,17 +26,23 @@ public class RSSFeed extends Feed{
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(new XmlReader(this.url));
 
+            int articles_received = 0;
             for (SyndEntry entry : feed.getEntries()) {
+
                 Article.Builder articleBuilder = new Article.Builder(entry.getTitle(), entry.getAuthor());
-                Article article = articleBuilder.
-                        withDate(entry.getPublishedDate())
+                Article article = articleBuilder
+                        .withDate(entry.getPublishedDate())
                         .withURL(entry.getLink())
+                        .withDescription(String.valueOf(entry.getDescription()))
                         .withPriority(0)
                         .build();
                 articles.add(article);
+                articles_received++;
             }
+            logger.debug("RSSFEED: successfully received " + articles_received + " articles!");
+            System.out.println("RSSFEED: successfully received " + articles_received + " articles!");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         return articles;
     }

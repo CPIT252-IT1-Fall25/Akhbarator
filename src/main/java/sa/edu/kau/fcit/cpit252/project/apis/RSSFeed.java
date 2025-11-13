@@ -5,30 +5,32 @@ import java.util.ArrayList;
 
 
 import com.rometools.rome.feed.synd.SyndEntry;
-import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.rometools.rome.feed.synd.SyndFeed;
 
+
+import sa.edu.kau.fcit.cpit252.project.apis.source.FeedSource;
 import sa.edu.kau.fcit.cpit252.project.news.Article;
 
 
 public class RSSFeed extends Feed{
     static Logger logger = LoggerFactory.getLogger("sa.edu.kau.fcit.cpit252.project.apis.RSSFeed");
-    public RSSFeed(URL url) {
-        super(url);
+    public RSSFeed(FeedSource source) {
+        super(source);
     }
     public ArrayList<Article> run() {
         ArrayList<Article> articles = new ArrayList<Article>();
 
         try {
             SyndFeedInput input = new SyndFeedInput();
-            SyndFeed feed = input.build(new XmlReader(this.url));
+            logger.debug(this.source.getUrl().toString());
+            SyndFeed feed = input.build(new XmlReader(this.source.getUrl()));
 
             int articles_received = 0;
             for (SyndEntry entry : feed.getEntries()) {
-
                 Article.Builder articleBuilder = new Article.Builder(entry.getTitle(), entry.getAuthor());
                 Article article = articleBuilder
                         .withDate(entry.getPublishedDate())
@@ -36,6 +38,7 @@ public class RSSFeed extends Feed{
                         .withDescription(String.valueOf(entry.getDescription()))
                         .withPriority(0)
                         .build();
+
                 articles.add(article);
                 articles_received++;
             }

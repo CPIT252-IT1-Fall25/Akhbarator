@@ -25,12 +25,14 @@ public class RSSFeed extends Feed{
         ArrayList<Article> articles = new ArrayList<Article>();
 
         try {
+            logger.info("RSSFeed started running...");
             SyndFeedInput input = new SyndFeedInput();
-            logger.debug(this.source.getUrl().toString());
+            logger.debug("Feed URL: " + this.source.getUrl());
             SyndFeed feed = input.build(new XmlReader(this.source.getUrl()));
-
+            logger.info("Successfully fetched RSS feed: " + feed.getTitle());
             int articles_received = 0;
             for (SyndEntry entry : feed.getEntries()) {
+                logger.debug("Processing entry: " + entry.getTitle());
                 Article.Builder articleBuilder = new Article.Builder(entry.getTitle(), entry.getAuthor());
                 Article article = articleBuilder
                         .withDate(entry.getPublishedDate())
@@ -47,6 +49,7 @@ public class RSSFeed extends Feed{
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+        logger.info("RSSFeed run() completed for source: " + this.source.getUrl());
         return articles;
     }
 }

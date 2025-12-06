@@ -1,96 +1,70 @@
 package sa.edu.kau.fcit.cpit252.project.viewer;
 
-
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
-import java.util.ArrayList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import sa.edu.kau.fcit.cpit252.project.apis.Feed;
 import sa.edu.kau.fcit.cpit252.project.news.Article;
 
+import java.awt.*;
+import java.net.URI;
+import java.util.ArrayList;
+
 public class Viewer {
-    static Logger logger = LoggerFactory.getLogger("sa.edu.kau.fcit.cpit252.project.viewer");
+
+    private final Stage stage;
     private final Feed[] feeds;
-    public Viewer(Feed[] feeds){
+
+    public Viewer(Stage stage, Feed[] feeds) {
+        this.stage = stage;
         this.feeds = feeds;
     }
+
     public void run() {
         String userName = System.getProperty("user.name");
-        if (userName == null)
-            userName = "";
+        if (userName == null) userName = "";
 
-        JFrame frame = new JFrame("Akhbarator");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1300, 1000);
-        frame.setLayout(new BorderLayout());
+        VBox root = new VBox(15);
+        root.setPadding(new Insets(20));
 
-        StringBuilder html = new StringBuilder(String.format("""
-<html>
-<head>
-<style>
-body {
-    font-family: 'Segoe UI', 'SansSerif';
-    font-size: 14px;
-    color: #222;
-    background-color: #fafafa;
-    line-height: 1.6;
-    margin: 10px;
-}
-h2 {
-    color: #1a73e8;
-    font-weight: 500;
-}
-h3 {
-    color: #1a73e8;
-    font-weight: 400;
-    font-size: 30px;
-}
-a {
-    color: #0b57d0;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
-}
-</style>
-</head>
-<body>
-<h2>Welcome %s!</h2>
-""", userName));
+        Label welcome = new Label("Welcome " + userName + "!");
+        welcome.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
 
-        for (Feed feed: this.feeds) {
-            html.append("<h3>").append(feed.getFeedName()).append("</h3>\n");
+        root.getChildren().add(welcome);
+
+        for (Feed feed : feeds) {
+
+            TitledPane pane = new TitledPane();
+            pane.setText(feed.getFeedName());
+            pane.setExpanded(false);
+
+            ListView<Article> list = new ListView<>();
             ArrayList<Article> articles = feed.run();
-            articles.forEach(a -> html.append(a.toString()));
-        }
-        html.append("</html>");
+            list.getItems().addAll(articles);
 
-        JScrollPane scrollPane = createScrollPane(html);
-
-        frame.add(scrollPane, BorderLayout.CENTER);
-        frame.setVisible(true);
-    }
-
-    private static JScrollPane createScrollPane(StringBuilder html) {
-        JEditorPane editorPane = new JEditorPane("text/html", html.toString());
-        editorPane.setEditable(false);
-        editorPane.setOpaque(false);
-        editorPane.addHyperlinkListener(e -> {
-            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                try {
-                    Desktop.getDesktop().browse(e.getURL().toURI());
-                } catch (Exception ex) {
-                    logger.error(ex.getMessage(), ex);
+            // clicking an article opens its link
+            list.setOnMouseClicked(e -> {
+                Article a = list.getSelectionModel().getSelectedItem();
+                if (a != null && a.url != null) {
+                    try {
+                        Desktop.getDesktop().browse(new URI(a.url));
+                    } catch (Exception ignored) {}
                 }
-            }
-        });
+            });
 
-        JScrollPane scrollPane = new JScrollPane(editorPane);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        return scrollPane;
+            pane.setContent(list);
+            root.getChildren().add(pane);
+        }
+
+        ScrollPane scroll = new ScrollPane(root);
+        scroll.setFitToWidth(true);
+
+        stage.setScene(new Scene(scroll, 1300, 1000));
+        stage.setTitle("Akhbarator");
+        stage.show();
     }
 }

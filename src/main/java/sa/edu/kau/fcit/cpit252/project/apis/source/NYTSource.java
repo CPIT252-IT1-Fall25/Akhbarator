@@ -5,7 +5,7 @@ import java.net.URL;
 
 public class NYTSource implements FeedSource {
     String name = "The New York times";
-    URL url = new URL("http://rss.cnn.com/rss/cnn_topstories.rss");
+    URL url = new URL("https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml");
 
     public NYTSource() throws MalformedURLException {}
 

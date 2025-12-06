@@ -1,7 +1,5 @@
 package sa.edu.kau.fcit.cpit252.project.news;
 
-import javax.swing.event.MenuKeyListener;
-import java.net.URL;
 import java.util.Date;
 
 public class Article {
@@ -25,9 +23,7 @@ public class Article {
 
     @Override
     public String toString() {
-        return "<p>• " +
-                    "<a href='" + this.url + "'>" + this.title + "</a>" +
-                "</p>";
+        return "• " + title + " (" + author + ")";
     }
 
     static public class Builder{

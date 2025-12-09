@@ -62,6 +62,11 @@
           <artifactId>javafx-fxml</artifactId>
           <version>25</version>
       </dependency>
+      <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-web</artifactId>
+          <version>25</version>
+      </dependency>
       <!-- https://mvnrepository.com/artifact/io.github.niyiomotoso/the-guardian-api-java-client -->
       <dependency>
           <groupId>io.github.niyiomotoso</groupId>

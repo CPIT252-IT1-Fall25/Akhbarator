@@ -1,0 +1,13 @@
+body {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    font-family: "Segoe UI", sans-serif;
+    margin: 20px;
+    line-height: 1.6;
+}
+
+a { color: #4ea3ff; }
+
+h1, h2, h3 {
+    color: #ffffff;
+}

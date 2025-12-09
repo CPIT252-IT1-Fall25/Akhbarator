@@ -8,18 +8,25 @@ public class Article {
     public String author;
     public Date date;
     public String url;
-    public String content;
-    public String html;
+    public String body;
     public String description;
     public int priority;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
 
     private Article(Builder builder) {
         this.title = builder.title;
         this.author = builder.author;
         this.date = builder.date;
         this.url = builder.url;
-        this.content = builder.content;
-        this.html = builder.html;
+        this.body = builder.body;
         this.description = builder.description;
         this.priority = 0;
     }
@@ -41,8 +48,7 @@ public class Article {
         public String author;
         public Date date;
         public String url;
-        public String content;
-        public String html;
+        public String body;
         public String description;
         public int priority;
         public Builder(String title) {
@@ -71,8 +77,8 @@ public class Article {
             return this;
         }
 
-        public Builder withHTML(String html) {
-            this.html = html;
+        public Builder withBody(String body) {
+            this.body = body;
             return this;
         }
 

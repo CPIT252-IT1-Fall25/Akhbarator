@@ -46,7 +46,7 @@ public class GuardianExtractor extends Feed {
             String id = item.getId();
             String body = getBodyFromId(id);
             System.out.println(body);
-            articles.add(new Article.Builder(title).withHTML(body).withURL(url).build());
+            articles.add(new Article.Builder(title).withBody(body).withURL(url).build());
         }
         return articles;
     }

@@ -1,6 +1,7 @@
 package sa.edu.kau.fcit.cpit252.project.news;
 
 import java.util.Date;
+import java.util.Locale;
 
 public class Article {
     public String title;
@@ -8,6 +9,7 @@ public class Article {
     public Date date;
     public String url;
     public String content;
+    public String html;
     public String description;
     public int priority;
 
@@ -17,13 +19,21 @@ public class Article {
         this.date = builder.date;
         this.url = builder.url;
         this.content = builder.content;
+        this.html = builder.html;
         this.description = builder.description;
         this.priority = 0;
     }
 
     @Override
     public String toString() {
-        return "• " + title + " (" + author + ")";
+        String result = title;
+        if (this.author != null) {
+            title = title + " by author";
+            if (this.author.toLowerCase().contains("and"))
+                title = title + "s";
+            title = title + " ";
+        }
+        return result;
     }
 
     static public class Builder{
@@ -32,12 +42,18 @@ public class Article {
         public Date date;
         public String url;
         public String content;
+        public String html;
         public String description;
         public int priority;
-        public Builder(String title, String author) {
+        public Builder(String title) {
             this.title = title;
-            this.author = author;
         }
+
+        public Builder withAuthor(String author) {
+            this.author = author;
+            return this;
+        }
+
         public Builder withDate(Date date) {
             this.date = date;
             return this;
@@ -52,6 +68,11 @@ public class Article {
         }
         public Builder withPriority(Integer priority) {
             this.priority = priority;
+            return this;
+        }
+
+        public Builder withHTML(String html) {
+            this.html = html;
             return this;
         }
 

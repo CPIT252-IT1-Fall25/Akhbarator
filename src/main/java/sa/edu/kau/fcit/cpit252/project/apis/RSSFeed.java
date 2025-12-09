@@ -17,9 +17,14 @@ import sa.edu.kau.fcit.cpit252.project.news.Article;
 
 
 public class RSSFeed extends Feed{
+    FeedSource source;
     static Logger logger = LoggerFactory.getLogger("sa.edu.kau.fcit.cpit252.project.apis.RSSFeed");
     public RSSFeed(FeedSource source) {
-        super(source);
+            this.source = source;
+
+    }
+    public String getFeedName() {
+        return source.getName();
     }
     public ArrayList<Article> run() {
         ArrayList<Article> articles = new ArrayList<Article>();
@@ -33,8 +38,9 @@ public class RSSFeed extends Feed{
             int articles_received = 0;
             for (SyndEntry entry : feed.getEntries()) {
                 logger.debug("Processing entry: " + entry.getTitle());
-                Article.Builder articleBuilder = new Article.Builder(entry.getTitle(), entry.getAuthor());
+                Article.Builder articleBuilder = new Article.Builder(entry.getTitle());
                 Article article = articleBuilder
+                        .withAuthor(entry.getAuthor())
                         .withDate(entry.getPublishedDate())
                         .withURL(entry.getLink())
                         .withDescription(String.valueOf(entry.getDescription()))

@@ -46,12 +46,11 @@ public class Viewer {
             ArrayList<Article> articles = feed.run();
             list.getItems().addAll(articles);
 
-            // clicking an article opens its link
             list.setOnMouseClicked(e -> {
-                Article a = list.getSelectionModel().getSelectedItem();
-                if (a != null && a.url != null) {
+                Article article = list.getSelectionModel().getSelectedItem();
+                if (article != null && article.url != null) {
                     try {
-                        Desktop.getDesktop().browse(new URI(a.url));
+                        Desktop.getDesktop().browse(new URI(article.url));
                     } catch (Exception ignored) {}
                 }
             });

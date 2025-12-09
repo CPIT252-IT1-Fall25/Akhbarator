@@ -1,13 +1,5 @@
 package sa.edu.kau.fcit.cpit252.project.apis.extractor;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
-import org.json.JSONObject;
-import sa.edu.kau.fcit.cpit252.project.apis.Feed;
-import sa.edu.kau.fcit.cpit252.project.news.Article;
-import the.guardian.api.client.GuardianApi;
-import the.guardian.api.http.content.ContentItem;
-import the.guardian.api.http.content.ContentResponse;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -15,8 +7,21 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
+import io.github.cdimascio.dotenv.DotenvBuilder;
+import org.json.JSONObject;
+import the.guardian.api.client.GuardianApi;
+import the.guardian.api.http.content.ContentItem;
+import the.guardian.api.http.content.ContentResponse;
+import io.github.cdimascio.dotenv.Dotenv;
+
+
+import sa.edu.kau.fcit.cpit252.project.apis.Feed;
+import sa.edu.kau.fcit.cpit252.project.news.Article;
+
+
 public class GuardianExtractor extends Feed {
-    static String key = "4bc2ba60-9723-494f-9364-26454591d508";
+    static String key = Dotenv.configure().load().get("GUARDIAN_API_KEY");;
     static String baseUrl = "https://content.guardianapis.com/";
     static GuardianApi guardianApi = new GuardianApi(key);
 

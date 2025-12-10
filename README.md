@@ -1,20 +1,47 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Fv869B0L)
-# Project Name
-Akbarator
-## Description
-a Desktop app that curates news fetched from various APIs and filter and format them as the user wishes. 
+# Akbarator
 
+A powerful desktop news aggregator that puts you in control of your news feed.
 
-## Features
-- ability to easily add and remove news APIs
-- rank articles by importance to each user
-- filter news through keywords 
-- presistent memory of news to let the user acccess them without internet connection
+## Overview
 
+Akbarator is a desktop application designed to curate, filter, and personalize news from multiple sources. It aggregates articles from various news APIs and presents them according to your preferences, ensuring you stay informed about what matters most to you.
+
+## Key Features
+
+### 🔌 Flexible API Integration
+
+Easily connect to multiple news APIs with a simple interface. Add or remove news sources on the fly without restarting the application.
+
+### 🎯 Personalized Ranking
+
+Articles are intelligently ranked based on your interests and reading patterns. The more you use Akbarator, the better it understands what news matters to you.
+
+### 🔍 Advanced Filtering
+
+Filter news content using custom keywords and criteria. Create multiple filter profiles for different topics or moods.
+
+### 💾 Offline Access
+
+All fetched articles are stored locally with persistent memory, allowing you to read your news collection even without an internet connection.
+
+## Why Akbarator?
+
+* **Stay Focused**: Cut through the noise and see only the news that's relevant to you
+* **One Dashboard**: Aggregate news from multiple sources in a single, unified interface
+* **Your Data**: All articles are stored locally on your machine
+* **Customizable**: Tailor every aspect of your news consumption experience
 
 ## Usage
 
 To build and run the app, use:
+
+```shell
+# Add your build/run commands here
+```
+
+## Screenshots
+
 
 ```shell
 ```

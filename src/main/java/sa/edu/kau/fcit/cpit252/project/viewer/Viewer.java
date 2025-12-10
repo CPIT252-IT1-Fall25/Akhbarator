@@ -21,6 +21,8 @@ import javafx.stage.Stage;
 
 import sa.edu.kau.fcit.cpit252.project.Ordering.*;
 import sa.edu.kau.fcit.cpit252.project.apis.Feed;
+import sa.edu.kau.fcit.cpit252.project.database.Database;
+import sa.edu.kau.fcit.cpit252.project.database.Sqlite;
 import sa.edu.kau.fcit.cpit252.project.news.Article;
 
 public class Viewer {
@@ -34,7 +36,7 @@ public class Viewer {
     private final Feed[] feeds;
     private ArrayList<Article> articles;
     private OrderingStrategy ordering = new DefaultOrdering();
-
+    private final Database store = new Sqlite();
     public Viewer(Stage stage, Feed[] feeds) {
         this.stage = stage;
         this.feeds = feeds;
@@ -102,16 +104,18 @@ public class Viewer {
 
         ListView<Article> list = new ListView<>();
         articles = feed.run();
-        reorder();
+        reorder(articles);
         list.getItems().addAll(articles);
 
         list.setOnMouseClicked(e -> {
             Article article = list.getSelectionModel().getSelectedItem();
             if (article != null && article.getBody() != null) {
                 showHtmlArticle(article);
+                store.save(article);
             } else if (article != null && article.getUrl() != null) {
                 try {
                     Desktop.getDesktop().browse(new URI(article.getUrl()));
+                    store.save(article);
                 } catch (Exception ignored) {}
             }
         });
@@ -127,13 +131,13 @@ public class Viewer {
             for (Article a : articles) {
                 a.relevance = 0.0;
             }
-            list.getItems().setAll(reorder());
+            list.getItems().setAll(reorder(articles));
         });
 
         orderCombo.setOnAction(e -> {
             String selectedOrdering = orderCombo.getValue();
             this.ordering = orderingMap.get(selectedOrdering);
-            ArrayList<Article> orderedArticles = reorder();
+            ArrayList<Article> orderedArticles = reorder(articles);
             list.getItems().setAll(orderedArticles);
         });
 
@@ -146,17 +150,23 @@ public class Viewer {
     }
 
     private ArrayList<Article> searchArticles(String keywords) {
+
+        ArrayList<Article> articlesToFilter = new ArrayList<>();
+        for (Article article : articles) {
+            articlesToFilter.add(article.clone());
+        }
+
         if (keywords.isEmpty()) {
-            for (Article a : articles) {
+            for (Article a : articlesToFilter) {
                 a.relevance = 0.0;
             }
-            return reorder();
+            return reorder(articlesToFilter);
         }
 
         String[] terms = keywords.toLowerCase().split("\\s+");
         ArrayList<Article> result = new ArrayList<>();
 
-        for (Article article : articles) {
+        for (Article article : articlesToFilter) {
             double score = 0;
             String t = article.title != null ? article.title.toLowerCase() : "";
             String d = article.description != null ? article.description.toLowerCase() : "";
@@ -172,8 +182,7 @@ public class Viewer {
             }
         }
 
-        articles = result;
-        return reorder();
+        return reorder(result);
     }
 
     private void showHtmlArticle(Article article) {
@@ -182,7 +191,7 @@ public class Viewer {
         WebView view = new WebView();
         var engine = view.getEngine();
 
-        String css = loadResourceText("/webview_theme.css");
+        String css = loadResourceText();
         String html =
                 """
                 <html>
@@ -206,8 +215,8 @@ public class Viewer {
         window.show();
     }
 
-    private String loadResourceText(String path) {
-        try (var stream = getClass().getResourceAsStream(path)) {
+    private String loadResourceText() {
+        try (var stream = getClass().getResourceAsStream("/webview_theme.css")) {
             assert stream != null;
             return new String(stream.readAllBytes());
         } catch (Exception e) {
@@ -215,7 +224,7 @@ public class Viewer {
         }
     }
 
-    public ArrayList<Article> reorder() {
+    public ArrayList<Article> reorder(ArrayList<Article> articles) {
         return ordering.order(articles);
     }
 }

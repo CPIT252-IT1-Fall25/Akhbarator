@@ -38,12 +38,26 @@ Parts of this project were created with the assistance of Large Language Models 
 
 All final decisions, implementations, and content were reviewed, verified, and approved by the project team. The use of LLMs does not replace human responsibility for accuracy, validity, and originality of the work.
 
+```shell
+mvn javafx:run
+```
 
+## Screenshots
+### Main page
+![main_page](main_page.png)
+### Feed page
+![guardian_page](guardian_page.png)
+### Feed page after search
+![search_function](search_function.png)
+### Local records
+![local_record](local_record.png)
 
 
 
 
 ## 🧑‍🤝‍🧑 Team contributions
+
+### total commits: 35
 
 ---
 

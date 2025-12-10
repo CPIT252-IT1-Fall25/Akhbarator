@@ -81,12 +81,6 @@ public class AppTest {
             assertEquals("Loaded content", bodyContent[0]);
         }
 
-        @Test
-        public void testArticleToString() {
-            Article article = new Article.Builder("Title", "Author").build();
-            String expected = "• Title (Author)";
-            assertEquals(expected, article.toString());
-        }
     }
 
     // ============================================

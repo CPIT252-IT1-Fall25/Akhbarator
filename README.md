@@ -32,21 +32,44 @@ All fetched articles are stored locally with persistent memory, allowing you to 
 * **Your Data**: All articles are stored locally on your machine
 * **Customizable**: Tailor every aspect of your news consumption experience
 
-## Usage
+## LLM Usage Disclosure
 
-To build and run the app, use:
+Parts of this project were created with the assistance of Large Language Models (LLMs), including tools such as ChatGPT. These models were used to help with tasks such as brainstorming, refining ideas, generating explanations, reviewing code, and improving documentation.
 
-```shell
-# Add your build/run commands here
-```
-
-## Screenshots
+All final decisions, implementations, and content were reviewed, verified, and approved by the project team. The use of LLMs does not replace human responsibility for accuracy, validity, and originality of the work.
 
 
-```shell
-```
 
-## Screenshots
+
+
+
+## 🧑‍🤝‍🧑 Team Contributions
+
+---
+
+### 🟦 Hamad
+**Roles:**
+- GitHub Kanban management
+- Ordering class development
+- UI design & implementation
+
+---
+
+### 🟩 Abdulrahman
+**Roles:**
+- API integration
+- Core logic + heavy coding
+- UI development
+
+---
+
+### 🟨 Rakan
+**Roles:**
+- Unit testing
+- README documentation
+- General coding work
+
+---
 
 
 ## License

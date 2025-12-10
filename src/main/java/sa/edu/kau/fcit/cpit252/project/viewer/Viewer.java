@@ -1,6 +1,5 @@
 package sa.edu.kau.fcit.cpit252.project.viewer;
 
-
 import java.awt.*;
 import java.net.URI;
 import java.util.ArrayList;
@@ -9,19 +8,20 @@ import java.util.Objects;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 import sa.edu.kau.fcit.cpit252.project.Ordering.*;
 import sa.edu.kau.fcit.cpit252.project.apis.Feed;
 import sa.edu.kau.fcit.cpit252.project.news.Article;
-
-
 
 public class Viewer {
     private final static Map<String, OrderingStrategy> orderingMap = Map.of(
@@ -34,6 +34,7 @@ public class Viewer {
     private final Feed[] feeds;
     private ArrayList<Article> articles;
     private OrderingStrategy ordering = new DefaultOrdering();
+
     public Viewer(Stage stage, Feed[] feeds) {
         this.stage = stage;
         this.feeds = feeds;
@@ -82,10 +83,20 @@ public class Viewer {
         back.setStyle("-fx-font-size: 16px;");
         back.setOnAction(e -> showMainPage());
 
+        // Search box
+        HBox searchBox = new HBox(10);
+        Label searchLabel = new Label("Search:");
+        TextField searchField = new TextField();
+        searchField.setPromptText("Enter keywords");
+        searchField.setPrefWidth(250);
+        Button searchBtn = new Button("Search");
+        Button clearBtn = new Button("Clear");
+        searchBox.getChildren().addAll(searchLabel, searchField, searchBtn, clearBtn);
+
         Label orderLabel = new Label("Order articles by:");
         ComboBox<String> orderCombo = new ComboBox<>();
         orderCombo.getItems().addAll(orderingMap.keySet());
-        orderCombo.setValue("Newest first"); // default
+        orderCombo.setValue("Newest first");
 
         root.getChildren().addAll(orderLabel, orderCombo);
 
@@ -96,28 +107,73 @@ public class Viewer {
 
         list.setOnMouseClicked(e -> {
             Article article = list.getSelectionModel().getSelectedItem();
-            if (article.getBody() != null) {
+            if (article != null && article.getBody() != null) {
                 showHtmlArticle(article);
-            } else if (article.getUrl() != null) {
+            } else if (article != null && article.getUrl() != null) {
                 try {
                     Desktop.getDesktop().browse(new URI(article.getUrl()));
                 } catch (Exception ignored) {}
             }
         });
 
+        searchBtn.setOnAction(e -> {
+            String keywords = searchField.getText().trim();
+            ArrayList<Article> filtered = searchArticles(keywords);
+            list.getItems().setAll(filtered);
+        });
+
+        clearBtn.setOnAction(e -> {
+            searchField.clear();
+            for (Article a : articles) {
+                a.relevance = 0.0;
+            }
+            list.getItems().setAll(reorder());
+        });
+
         orderCombo.setOnAction(e -> {
             String selectedOrdering = orderCombo.getValue();
             this.ordering = orderingMap.get(selectedOrdering);
-            ArrayList<Article> orderedArticles = reorder( );
+            ArrayList<Article> orderedArticles = reorder();
             list.getItems().setAll(orderedArticles);
         });
 
-        root.getChildren().addAll(back, title, list);
+        root.getChildren().addAll(back, title, searchBox, list);
 
         ScrollPane scroll = new ScrollPane(root);
         scroll.setFitToWidth(true);
 
         stage.getScene().setRoot(scroll);
+    }
+
+    private ArrayList<Article> searchArticles(String keywords) {
+        if (keywords.isEmpty()) {
+            for (Article a : articles) {
+                a.relevance = 0.0;
+            }
+            return reorder();
+        }
+
+        String[] terms = keywords.toLowerCase().split("\\s+");
+        ArrayList<Article> result = new ArrayList<>();
+
+        for (Article article : articles) {
+            double score = 0;
+            String t = article.title != null ? article.title.toLowerCase() : "";
+            String d = article.description != null ? article.description.toLowerCase() : "";
+
+            for (String term : terms) {
+                if (t.contains(term)) score += 30;
+                if (d.contains(term)) score += 10;
+            }
+
+            if (score > 0) {
+                article.relevance = score;
+                result.add(article);
+            }
+        }
+
+        articles = result;
+        return reorder();
     }
 
     private void showHtmlArticle(Article article) {

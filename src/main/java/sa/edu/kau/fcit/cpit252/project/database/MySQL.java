@@ -1,4 +1,4 @@
-package sa.edu.kau.fcit.cpit252.project.database;
+/*package sa.edu.kau.fcit.cpit252.project.database;
 
 public class MySQL implements Database {
     @Override
@@ -9,5 +9,5 @@ public class MySQL implements Database {
 
     @Override
     public void commit() { }
-}
+}*/
 

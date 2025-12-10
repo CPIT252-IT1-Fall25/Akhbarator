@@ -43,7 +43,7 @@ All final decisions, implementations, and content were reviewed, verified, and a
 
 
 
-## 🧑‍🤝‍🧑 Team Contributions
+## 🧑‍🤝‍🧑 Team contributions
 
 ---
 

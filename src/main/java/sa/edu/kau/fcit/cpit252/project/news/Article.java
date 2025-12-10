@@ -1,74 +1,88 @@
 package sa.edu.kau.fcit.cpit252.project.news;
 
 import java.util.Date;
-import java.util.Locale;
-import java.util.function.Supplier;
 
 public class Article {
-    private String title;
-    private final String author;
-    private final Date date;
-    private final String url;
-    private String body;
-    private final Supplier<String> bodySupplier;
+    public String title;
+    public String author;
+    public Date date;
+    public String url;
+    public String content;
     public String description;
     public int priority;
-
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getBody() {
-        boolean canSupplies = body == null && bodySupplier != null;
-        if (canSupplies) {
-            body = bodySupplier.get(); // fetch lazily
-        }
-        return body;
-    }
+    public double relevance; // Added for relevance ordering
+    public String body; // For HTML content
+    private java.util.function.Supplier<String> bodySupplier; // Lazy loading for body
 
     private Article(Builder builder) {
         this.title = builder.title;
         this.author = builder.author;
         this.date = builder.date;
         this.url = builder.url;
+        this.content = builder.content;
+        this.description = builder.description;
+        this.priority = builder.priority;
+        this.relevance = builder.relevance;
         this.body = builder.body;
         this.bodySupplier = builder.bodySupplier;
-        this.description = builder.description;
-        this.priority = 0;
+    }
+
+    // Getter methods for ordering
+    public String getTitle() {
+        return title;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public double getRelevance() {
+        return relevance;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getBody() {
+        // Lazy load body if supplier is provided
+        if (body == null && bodySupplier != null) {
+            body = bodySupplier.get();
+        }
+        return body;
     }
 
     @Override
     public String toString() {
-        if (author == null || author.isBlank()) {
-            return title;
-        }
-
-        StringBuilder result = new StringBuilder(title);
-        result.append(" by ").append(author);
-
-        if (author.toLowerCase().contains("and")) {
-            result.append("s");
-        }
-
-        return result.toString();
+        return "• " + title + " (" + author + ")";
     }
 
-    static public class Builder{
+    static public class Builder {
         public String title;
         public String author;
         public Date date;
         public String url;
-        public String body;
-        public Supplier<String> bodySupplier;
+        public String content;
         public String description;
         public int priority;
-        public Builder(String title) {
+        public double relevance;
+        public String body;
+        public java.util.function.Supplier<String> bodySupplier;
+
+        // Constructor with both title and author
+        public Builder(String title, String author) {
             this.title = title;
+            this.author = author;
+            this.relevance = 0.0; // Default relevance
+        }
+
+        // Constructor with only title (author defaults to empty string)
+        public Builder(String title) {
+            this(title, "");
         }
 
         public Builder withAuthor(String author) {
@@ -80,16 +94,24 @@ public class Article {
             this.date = date;
             return this;
         }
+
         public Builder withURL(String url) {
             this.url = url;
             return this;
         }
+
         public Builder withDescription(String description) {
             this.description = description;
             return this;
         }
+
         public Builder withPriority(Integer priority) {
             this.priority = priority;
+            return this;
+        }
+
+        public Builder withRelevance(Double relevance) {
+            this.relevance = relevance;
             return this;
         }
 
@@ -98,8 +120,8 @@ public class Article {
             return this;
         }
 
-        public Builder withSupplier(Supplier<String> supplier) {
-            this.bodySupplier = supplier;
+        public Builder withSupplier(java.util.function.Supplier<String> bodySupplier) {
+            this.bodySupplier = bodySupplier;
             return this;
         }
 

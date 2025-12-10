@@ -6,7 +6,4 @@ import java.util.ArrayList;
 
 public interface OrderingStrategy {
     ArrayList<Article> order(ArrayList<Article> articles);
-
 }
-
-

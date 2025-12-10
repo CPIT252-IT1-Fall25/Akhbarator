@@ -1,5 +1,12 @@
 package sa.edu.kau.fcit.cpit252.project.viewer;
 
+
+import java.awt.*;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
+
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -9,19 +16,24 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+
+import sa.edu.kau.fcit.cpit252.project.Ordering.*;
 import sa.edu.kau.fcit.cpit252.project.apis.Feed;
 import sa.edu.kau.fcit.cpit252.project.news.Article;
 
-import java.awt.*;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Objects;
+
 
 public class Viewer {
-
+    private final static Map<String, OrderingStrategy> orderingMap = Map.of(
+            "Newest first", new DefaultOrdering(),
+            "Oldest first", new ByDateOrdering(),
+            "By relevance", new ByRelevanceOrdering(),
+            "By title", new ByTitleOrdering()
+    );
     private final Stage stage;
     private final Feed[] feeds;
-
+    private ArrayList<Article> articles;
+    private OrderingStrategy ordering = new DefaultOrdering();
     public Viewer(Stage stage, Feed[] feeds) {
         this.stage = stage;
         this.feeds = feeds;
@@ -70,19 +82,34 @@ public class Viewer {
         back.setStyle("-fx-font-size: 16px;");
         back.setOnAction(e -> showMainPage());
 
+        Label orderLabel = new Label("Order articles by:");
+        ComboBox<String> orderCombo = new ComboBox<>();
+        orderCombo.getItems().addAll(orderingMap.keySet());
+        orderCombo.setValue("Newest first"); // default
+
+        root.getChildren().addAll(orderLabel, orderCombo);
+
         ListView<Article> list = new ListView<>();
-        ArrayList<Article> articles = feed.run();
+        articles = feed.run();
+        reorder();
         list.getItems().addAll(articles);
 
         list.setOnMouseClicked(e -> {
             Article article = list.getSelectionModel().getSelectedItem();
-            if (article.body != null) {
+            if (article.getBody() != null) {
                 showHtmlArticle(article);
-            } else if (article.url != null) {
+            } else if (article.getUrl() != null) {
                 try {
-                    Desktop.getDesktop().browse(new URI(article.url));
+                    Desktop.getDesktop().browse(new URI(article.getUrl()));
                 } catch (Exception ignored) {}
             }
+        });
+
+        orderCombo.setOnAction(e -> {
+            String selectedOrdering = orderCombo.getValue();
+            this.ordering = orderingMap.get(selectedOrdering);
+            ArrayList<Article> orderedArticles = reorder( );
+            list.getItems().setAll(orderedArticles);
         });
 
         root.getChildren().addAll(back, title, list);
@@ -109,7 +136,7 @@ public class Viewer {
                 </style>
             </head>
             <body>
-            """ + article.body + """
+            """ + article.getBody() + """
             </body>
             </html>
             """;
@@ -119,7 +146,7 @@ public class Viewer {
         Scene scene = new Scene(view, 900, 700);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/theme.css")).toExternalForm());
         window.setScene(scene);
-        window.setTitle(article.title);
+        window.setTitle(article.getTitle());
         window.show();
     }
 
@@ -130,5 +157,9 @@ public class Viewer {
         } catch (Exception e) {
             return "";
         }
+    }
+
+    public ArrayList<Article> reorder() {
+        return ordering.order(articles);
     }
 }

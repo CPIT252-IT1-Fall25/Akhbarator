@@ -8,7 +8,6 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
-import io.github.cdimascio.dotenv.DotenvBuilder;
 import org.json.JSONObject;
 import the.guardian.api.client.GuardianApi;
 import the.guardian.api.http.content.ContentItem;
@@ -49,9 +48,13 @@ public class GuardianExtractor extends Feed {
             String url = item.getWebUrl();
             System.out.println(title);
             String id = item.getId();
-            String body = getBodyFromId(id);
-            System.out.println(body);
-            articles.add(new Article.Builder(title).withBody(body).withURL(url).build());
+            articles.add(new Article.Builder(title).withSupplier(() -> {
+                try {
+                    return getBodyFromId(id);
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }).withURL(url).build());
         }
         return articles;
     }

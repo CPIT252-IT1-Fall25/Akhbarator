@@ -2,24 +2,34 @@ package sa.edu.kau.fcit.cpit252.project.news;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 public class Article {
-    public String title;
-    public String author;
-    public Date date;
-    public String url;
-    public String body;
+    private String title;
+    private final String author;
+    private final Date date;
+    private final String url;
+    private String body;
+    private final Supplier<String> bodySupplier;
     public String description;
     public int priority;
+
+
+    public String getUrl() {
+        return url;
+    }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getBody() {
+        boolean canSupplies = body == null && bodySupplier != null;
+        if (canSupplies) {
+            body = bodySupplier.get(); // fetch lazily
+        }
+        return body;
     }
-
 
     private Article(Builder builder) {
         this.title = builder.title;
@@ -27,20 +37,25 @@ public class Article {
         this.date = builder.date;
         this.url = builder.url;
         this.body = builder.body;
+        this.bodySupplier = builder.bodySupplier;
         this.description = builder.description;
         this.priority = 0;
     }
 
     @Override
     public String toString() {
-        String result = title;
-        if (this.author != null) {
-            title = title + " by author";
-            if (this.author.toLowerCase().contains("and"))
-                title = title + "s";
-            title = title + " ";
+        if (author == null || author.isBlank()) {
+            return title;
         }
-        return result;
+
+        StringBuilder result = new StringBuilder(title);
+        result.append(" by ").append(author);
+
+        if (author.toLowerCase().contains("and")) {
+            result.append("s");
+        }
+
+        return result.toString();
     }
 
     static public class Builder{
@@ -49,6 +64,7 @@ public class Article {
         public Date date;
         public String url;
         public String body;
+        public Supplier<String> bodySupplier;
         public String description;
         public int priority;
         public Builder(String title) {
@@ -79,6 +95,11 @@ public class Article {
 
         public Builder withBody(String body) {
             this.body = body;
+            return this;
+        }
+
+        public Builder withSupplier(Supplier<String> supplier) {
+            this.bodySupplier = supplier;
             return this;
         }
 

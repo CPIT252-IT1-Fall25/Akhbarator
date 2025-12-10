@@ -2,13 +2,11 @@ package sa.edu.kau.fcit.cpit252.project.Ordering;
 
 import sa.edu.kau.fcit.cpit252.project.news.Article;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.ArrayList;
 
-class ByRelevanceOrdering implements OrderingStrategy {
+public class ByRelevanceOrdering implements OrderingStrategy {
     @Override
-    public Article[] order(Article[] articles) {
-      //  Arrays.sort(articles, Comparator.comparingDouble(Article::getRelevance).reversed()); <-- after pattern
+    public ArrayList<Article> order(ArrayList<Article> articles) {
         return articles;
     }
 }

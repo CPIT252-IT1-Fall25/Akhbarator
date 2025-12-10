@@ -2,7 +2,7 @@ package sa.edu.kau.fcit.cpit252.project.news;
 
 import java.util.Date;
 
-public class Article {
+public class Article implements Cloneable {
     public String title;
     public String author;
     public Date date;
@@ -12,7 +12,7 @@ public class Article {
     public int priority;
     public double relevance; // Added for relevance ordering
     public String body; // For HTML content
-    private java.util.function.Supplier<String> bodySupplier; // Lazy loading for body
+    private final java.util.function.Supplier<String> bodySupplier; // Lazy loading for body
 
     private Article(Builder builder) {
         this.title = builder.title;
@@ -58,7 +58,29 @@ public class Article {
 
     @Override
     public String toString() {
-        return "• " + title + " (" + author + ")";
+        if (author == null || author.isBlank()) {
+            return title;
+        }
+
+        StringBuilder result = new StringBuilder(title);
+        result.append(" by ").append(author);
+
+        if (author.toLowerCase().contains("and")) {
+            result.append("s");
+        }
+
+        return result.toString();
+    }
+
+    @Override
+    public Article clone() {
+        try {
+            Article clone = (Article) super.clone();
+            clone.date = (Date)this.date.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     static public class Builder {
